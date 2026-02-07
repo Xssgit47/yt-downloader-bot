@@ -105,7 +105,13 @@ async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE, mode: s
         file_path.unlink(missing_ok=True)
 
     except DownloadError as e:
-        await edit_branded(status, f"❌ {str(e)}", use_long_footer=True)
+        error_text = str(e)
+        if "Sign in to confirm" in error_text or "cookies" in error_text.lower():
+            error_text = (
+                "This video requires sign-in (age-restricted or bot detection).\n"
+                "The bot currently doesn't have valid cookies. Contact @FNxDANGER for help."
+            )
+        await edit_branded(status, f"❌ {error_text}", use_long_footer=True)
     except Exception:
         await edit_branded(status, "🚨 Something went wrong. Try again later.", use_long_footer=True)
     finally:
