@@ -21,6 +21,8 @@ class Config:
     TEMP_DIR            = BASE_DIR / "temp"
     TEMP_DIR.mkdir(exist_ok=True)
 
+    COOKIES_PATH        = BASE_DIR / "cookies.txt"   # ← new
+
     YDL_COMMON_OPTS = {
         "quiet": True,
         "no_warnings": True,
