@@ -5,7 +5,7 @@ from pathlib import Path
 from telegram import Message
 from telegram.constants import ParseMode
 
-from .config import Config
+from src.config import Config
 
 
 def sanitize_filename(title: str) -> str:
@@ -65,5 +65,4 @@ async def edit_branded(
             **kwargs
         )
     except Exception:
-        # fallback if edit is not possible
         await reply_branded(message, text, use_long_footer, **kwargs)
