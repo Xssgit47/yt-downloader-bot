@@ -9,7 +9,6 @@ import asyncio
 import yt_dlp
 from pathlib import Path
 import logging
-import random
 
 from src.config import Config
 from src.utils import human_size
@@ -30,14 +29,6 @@ def get_ydl_opts(mode: str = "video", progress_callback=None):
         logger.info(f"Using cookies from: {Config.COOKIES_PATH}")
     else:
         logger.info("No cookies.txt found → running without authentication")
-
-    # Random proxy selection (rotates every time)
-    proxy = Config.get_random_proxy()
-    if proxy:
-        opts["proxy"] = proxy
-        logger.info(f"Using proxy: {proxy}")
-    else:
-        logger.info("No proxy available → running without proxy")
 
     if mode == "video":
         opts.update({
@@ -101,10 +92,10 @@ async def download_media(url: str, mode: str = "video", status_msg=None):
     except Exception as e:
         error_str = str(e)
         logger.error(f"Download failed: {error_str}")
-        if "Sign in to confirm" in error_str:
+        if "Sign in to confirm" in error_str or "cookies" in error_str.lower():
             raise DownloadError(
                 "This video requires sign-in (age-restricted or bot detection).\n"
-                "Try again later or contact @FNxDANGER for help."
+                "The bot currently doesn't have valid cookies. Contact @FNxDANGER for help."
             )
         raise DownloadError(error_str)
     finally:
