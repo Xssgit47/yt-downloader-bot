@@ -50,6 +50,16 @@ def get_ydl_opts(mode: str = "video", progress_callback=None):
 
     return opts
 
+# Force Android client (often bypasses bot detection)
+    opts["extractor_args"] = {
+        "youtube": {
+            "player_client": ["android", "web", "ios"],
+            "skip": ["web_safari", "web"],  # optional: skip strict clients
+        }
+    }
+
+    # Use a mobile user-agent (helps with some restrictions)
+    opts["user_agent"] = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
 
 async def get_video_info(url: str) -> dict:
     with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
