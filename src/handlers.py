@@ -2,10 +2,9 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
 
-from .downloader import get_video_info, download_media, DownloadError
-from .utils import reply_branded, edit_branded, human_size, sanitize_filename, delete_later
-from .config import Config
-
+from src.downloader import get_video_info, download_media, DownloadError
+from src.utils import reply_branded, edit_branded, human_size, sanitize_filename, delete_later
+from src.config import Config
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (
