@@ -1,6 +1,6 @@
+# Defensive path fix - helps in many deployment scenarios
 import sys
 import os
-# Make sure project root is in sys.path (fixes most import hell on servers)
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
