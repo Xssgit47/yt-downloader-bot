@@ -9,6 +9,7 @@ import asyncio
 import yt_dlp
 from pathlib import Path
 import logging
+import random
 
 from src.config import Config
 from src.utils import human_size
@@ -30,6 +31,14 @@ def get_ydl_opts(mode: str = "video", progress_callback=None):
     else:
         logger.info("No cookies.txt found → running without authentication")
 
+    # Random proxy selection (rotates every time)
+    proxy = Config.get_random_proxy()
+    if proxy:
+        opts["proxy"] = proxy
+        logger.info(f"Using proxy: {proxy}")
+    else:
+        logger.info("No proxy available → running without proxy")
+
     if mode == "video":
         opts.update({
             "format": "bestvideo[height<=1080]+bestaudio/best",
@@ -50,16 +59,6 @@ def get_ydl_opts(mode: str = "video", progress_callback=None):
 
     return opts
 
-# Force Android client (often bypasses bot detection)
-    opts["extractor_args"] = {
-        "youtube": {
-            "player_client": ["android", "web", "ios"],
-            "skip": ["web_safari", "web"],  # optional: skip strict clients
-        }
-    }
-
-    # Use a mobile user-agent (helps with some restrictions)
-    opts["user_agent"] = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
 
 async def get_video_info(url: str) -> dict:
     with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
@@ -100,7 +99,14 @@ async def download_media(url: str, mode: str = "video", status_msg=None):
         return file_path, size_mb
 
     except Exception as e:
-        raise DownloadError(str(e))
+        error_str = str(e)
+        logger.error(f"Download failed: {error_str}")
+        if "Sign in to confirm" in error_str:
+            raise DownloadError(
+                "This video requires sign-in (age-restricted or bot detection).\n"
+                "Try again later or contact @FNxDANGER for help."
+            )
+        raise DownloadError(error_str)
     finally:
         now = asyncio.get_event_loop().time()
         for f in Config.TEMP_DIR.glob("*"):
