@@ -1,3 +1,9 @@
+import sys
+import os
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from telegram import Update
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
@@ -5,6 +11,7 @@ from telegram.constants import ParseMode
 from src.downloader import get_video_info, download_media, DownloadError
 from src.utils import reply_branded, edit_branded, human_size, sanitize_filename, delete_later
 from src.config import Config
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = (
