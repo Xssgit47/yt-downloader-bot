@@ -1,4 +1,4 @@
-# Defensive path fix - helps in many deployment scenarios
+# Defensive path fix
 import sys
 import os
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -8,9 +8,12 @@ if project_root not in sys.path:
 import asyncio
 import yt_dlp
 from pathlib import Path
+import logging
 
 from src.config import Config
 from src.utils import human_size
+
+logger = logging.getLogger(__name__)
 
 
 class DownloadError(Exception):
@@ -19,6 +22,13 @@ class DownloadError(Exception):
 
 def get_ydl_opts(mode: str = "video", progress_callback=None):
     opts = Config.YDL_COMMON_OPTS.copy()
+
+    # Cookies support
+    if Config.COOKIES_PATH.exists():
+        opts["cookies"] = str(Config.COOKIES_PATH)
+        logger.info(f"Using cookies from: {Config.COOKIES_PATH}")
+    else:
+        logger.info("No cookies.txt found → running without authentication")
 
     if mode == "video":
         opts.update({
