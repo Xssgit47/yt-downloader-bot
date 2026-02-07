@@ -2,8 +2,8 @@ import asyncio
 import yt_dlp
 from pathlib import Path
 
-from .config import Config
-from .utils import human_size
+from src.config import Config
+from src.utils import human_size
 
 
 class DownloadError(Exception):
