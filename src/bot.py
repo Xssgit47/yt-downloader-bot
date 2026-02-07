@@ -8,9 +8,8 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from .config import Config
-from .handlers import start, help_command, audio_command, handle_url
-
+from src.config import Config
+from src.handlers import start, help_command, audio_command, handle_url
 # Logging setup
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
