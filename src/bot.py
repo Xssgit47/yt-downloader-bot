@@ -1,4 +1,4 @@
-# Defensive path fix - place this at the very top
+# Defensive path fix
 import sys
 import os
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -41,6 +41,11 @@ def main():
 
     print("YouTube Downloader Bot starting...")
     print("Made by @FNxDANGER")
+
+    if Config.COOKIES_PATH.exists():
+        print(f"Cookies file loaded: {Config.COOKIES_PATH}")
+    else:
+        print("Warning: cookies.txt not found → some videos may require sign-in")
 
     app.run_polling(
         drop_pending_updates=True,
