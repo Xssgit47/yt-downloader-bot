@@ -9,12 +9,10 @@ from src.config import Config
 
 
 def sanitize_filename(title: str) -> str:
-    """Remove invalid characters and limit length"""
     return re.sub(r'[^\w\s.-]', '_', title).strip()[:100]
 
 
 def human_size(size_bytes: int | float) -> str:
-    """Convert bytes to human readable format"""
     for unit in ['B', 'KiB', 'MiB', 'GiB']:
         if size_bytes < 1024:
             return f"{size_bytes:.1f} {unit}"
@@ -23,7 +21,6 @@ def human_size(size_bytes: int | float) -> str:
 
 
 async def delete_later(message: Message, delay: int = 12):
-    """Delete message after delay (best effort)"""
     try:
         await asyncio.sleep(delay)
         await message.delete()
