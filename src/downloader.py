@@ -1,3 +1,10 @@
+import sys
+import os
+# Make sure project root is in sys.path (fixes most import hell on servers)
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 import asyncio
 import yt_dlp
 from pathlib import Path
@@ -63,7 +70,6 @@ async def download_media(url: str, mode: str = "video", status_msg=None):
         if not files:
             raise DownloadError("No file downloaded")
 
-        # take the biggest / newest file
         file_path = max(files, key=lambda p: p.stat().st_size)
         size_mb = file_path.stat().st_size / (1024 * 1024)
 
@@ -76,7 +82,6 @@ async def download_media(url: str, mode: str = "video", status_msg=None):
     except Exception as e:
         raise DownloadError(str(e))
     finally:
-        # cleanup old files (>5 min)
         now = asyncio.get_event_loop().time()
         for f in Config.TEMP_DIR.glob("*"):
             if (now - f.stat().st_mtime) > 300:
